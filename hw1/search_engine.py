@@ -1,9 +1,8 @@
 from datetime import datetime
 from elasticsearch import Elasticsearch
-import logging
-from constants import doc_structure, file_identifiers
-
-
+import logging, json, time
+from constants import doc_constants, file_identifiers
+from elastic_functions import connect_elasticsearch, document_structure
 
 def get_single_doc(lines,curr, file_length):
 	single_doc = {}
@@ -17,25 +16,13 @@ def get_single_doc(lines,curr, file_length):
 			if identifier == '.I':
 				# print('found next seq id',identifier)
 				if curr_identifier in single_doc:
-					print('returning doc' )
 					return single_doc, curr
-				single_doc[curr_identifier] = identifier
+				single_doc[curr_identifier] = line[2:]
 			else:
 				curr+=1
 				single_doc[curr_identifier] = lines[curr].strip('\n')
 		curr+=1
 	return single_doc, curr
-
-
-def connect_elasticsearch():
-    _es = Elasticsearch("http://localhost:9200")
-    if _es.ping():
-        print('Connected to elasticsearch')
-        logging.info(_es.ping())
-    else:
-        print('Error!, unable to connect to elastic')
-
-    return _es
 
 def create_index(es, index_name, mapping):
     """
@@ -46,22 +33,43 @@ def create_index(es, index_name, mapping):
     logging.info(f"Creating index {index_name} with the following schema:{json.dumps(mapping, indent=2)}")
     es.indices.create(index=index_name, ignore=400, body=mapping)
 
-if __name__ == "__main__":
-	logging.basicConfig(level=logging.ERROR)
-	
-	es = connect_elasticsearch()
-	create_index(es,'medical_records', doc_structure)
+def store_record(es, index_name, record):
+    try:
+        outcome = es.index(index=index_name, body=record, id=record[doc_constants.doc_id])
+    except Exception as ex:
+        print('Error in indexing data')
+        print(str(ex))
+        logging.info(str(ex))
 
-	with open('ohmused_small.88-91') as f:
+if __name__ == "__main__":
+
+	#logging.basicConfig(level=logging.ERROR)
+	logging.basicConfig(filename='searchLogs.log', filemode='w+', format='%(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
+	es = connect_elasticsearch()
+	
+	es.indices.delete(index=doc_constants.index_name, ignore=[400, 404])
+	
+	if not es.indices.exists(index=doc_constants.index_name):
+		create_index(es, doc_constants.index_name, document_structure())
+
+	start_time = time.time()
+	with open(doc_constants.dfile_name) as f:
 		lines = f.readlines()
 		curr, file_length = 0, len(lines)
-		
+		docs_read = 0
 		while curr < file_length:
 			document, curr = get_single_doc(lines, curr, file_length)
-			print('document is ', document)
-		
-
+					
+			store_record(es,doc_constants.index_name,document)
+			print('storing doc with id', document["MedID"])
+			docs_read +=1
+			if docs_read > doc_constants.docs_to_be_read:
+				break
+	print('execution time is ', time.time()-start_time)
+	logging.info('execution time is ', time.time()-start_time)
+	
+	# all documents-http://localhost:9200/company/doc/_search
 	# print(
 	#   json.dumps(
-	#    	es.indices.get_mapping(index="medical_records"),indent=1)
+	#    	es.indices.get_mapping(index=doc_constants.index_name),indent=1)
 	# )
