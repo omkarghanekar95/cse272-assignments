@@ -1,8 +1,6 @@
 
 class query_constants:
 	qfile_name = 'datafiles/query.ohsu.1-63'
-	tfidf_log_file = 'results/tf_idf.txt'
-	bool_log_file = 'results/bool.txt'
 	#tfidf_log_file = 'datafiles/textfile.txt'
 	num = 'num'
 	title = 'title'
@@ -10,8 +8,12 @@ class query_constants:
 	description = 'desc'
 	qstart = '<top>'
 	qend = '</top>'
+	tf_idf = 'tf_idf'
+	bquery = 'boolean_query'
 
-
+	tfidf_log_file = 'results/tf_idf.txt'
+	bool_log_file = 'results/bool.txt'
+	
 	file_queries = {
 		'num':'query_number',
 		'title':'title',

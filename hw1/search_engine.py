@@ -11,10 +11,10 @@ def get_single_doc(lines,curr, file_length):
 		# print('line is',line, curr)
 		identifier = line[:2]
 		if identifier in file_identifiers.keys():
-			# print(file_identifiers[identifier],identifier)
+			
 			curr_identifier = file_identifiers[identifier]
 			if identifier == '.I':
-				# print('found next seq id',identifier)
+				
 				if curr_identifier in single_doc:
 					return single_doc, curr
 				single_doc[curr_identifier] = line[2:]
@@ -47,10 +47,10 @@ if __name__ == "__main__":
 	logging.basicConfig(filename='searchLogs.log', filemode='w+', format='%(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 	es = connect_elasticsearch()
 	
-	es.indices.delete(index=doc_constants.index_name, ignore=[400, 404])
+	#es.indices.delete(index=doc_constants.index_name, ignore=[400, 404])
 	
-	if not es.indices.exists(index=doc_constants.index_name):
-		create_index(es, doc_constants.index_name, document_structure())
+	# if not es.indices.exists(index=doc_constants.index_name):
+	# 	create_index(es, doc_constants.index_name, document_structure())
 
 	start_time = time.time()
 	with open(doc_constants.dfile_name) as f:
@@ -63,10 +63,12 @@ if __name__ == "__main__":
 			store_record(es,doc_constants.index_name,document)
 			print('storing doc with id', document["MedID"])
 			docs_read +=1
-			if docs_read > doc_constants.docs_to_be_read:
-				break
+			# # if docs_read > doc_constants.docs_to_be_read:
+			# 	break
+			if docs_read % 1000 == 0:
+				print(docs_read, ' docs read')
 	print('execution time is ', time.time()-start_time)
-	logging.info('execution time is ', time.time()-start_time)
+	logging.info("execution time is %s", str(time.time()-start_time))
 	
 	# all documents-http://localhost:9200/company/doc/_search
 	# print(

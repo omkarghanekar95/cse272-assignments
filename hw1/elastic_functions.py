@@ -84,14 +84,56 @@ def basic_query(qstring):
 	}
 	return query
 
-def bool_query():
+def bool_query(title, abstract):
+
 	bquery = {
 		"from" : 0,
 		"size" : 50,
-	    "query": {
-	    	"query_string" : {
-	    		"query" : ""
-	    	}
-     	}
+		"query": {
+		   "bool": {
+		   		"must": { 
+		            "match": { 
+	             		"Title": {
+	             			#"boost":2,
+	             			"query": title,
+	             			"analyzer": "my_analyzer"
+	             		}
+	             	}
+	            },
+	            "should":{
+	            	"match":{
+	            		"Abstract": abstract
+	            	}
+	            }
+		    }
+		}
 	}
 	return bquery
+
+def get_rank_eval_query():
+	rank_query = {
+		"requests": [
+		    {
+		      "id": "OHSU1",                                  
+		      "request": {                                              
+		          "query": { "match": { "text": "60 year old menopausal woman without hormone replacement therapy" } }
+		      },
+		      "ratings": [                                              
+		        { "_index": "medical_records", "_id": "91226903", "rating": 1 },
+		        { "_index": "medical_records", "_id": "90320756", "rating": 1 },
+		        { "_index": "medical_records", "_id": "91336317", "rating": 2 }
+		      ]
+		    }
+  		]
+	}
+# “term”: { “text”: “comedy” }
+# "must": [
+#   {
+#     "match": {
+#       "text_entry": {
+#         "query": "love",
+#         "_name": "love-must"
+#       }
+#     }
+#   }
+# ],
