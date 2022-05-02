@@ -1,7 +1,7 @@
 
 class query_constants:
 	qfile_name = 'datafiles/query.ohsu.1-63'
-	#tfidf_log_file = 'datafiles/textfile.txt'
+	rels_file = 'datafiles/qrels.ohsu.88-91.txt'
 	num = 'num'
 	title = 'title'
 	number = 'number'
@@ -10,10 +10,12 @@ class query_constants:
 	qend = '</top>'
 	tf_idf = 'tf_idf'
 	bquery = 'boolean_query'
+	rank_eval = 'relevance_feedback'
 
 	tfidf_log_file = 'results/tf_idf.txt'
 	bool_log_file = 'results/bool.txt'
-	
+	rank_log_file = 'results/rank.txt'
+
 	file_queries = {
 		'num':'query_number',
 		'title':'title',
