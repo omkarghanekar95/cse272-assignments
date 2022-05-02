@@ -110,30 +110,26 @@ def bool_query(title, abstract):
 	}
 	return bquery
 
-def get_rank_eval_query():
-	rank_query = {
-		"requests": [
-		    {
-		      "id": "OHSU1",                                  
+def get_rank_eval_query(qid, query_string, ratings, ids):
+	
+	req = [{
+		"id": qid,                                  
 		      "request": {                                              
-		          "query": { "match": { "text": "60 year old menopausal woman without hormone replacement therapy" } }
-		      },
-		      "ratings": [                                              
-		        { "_index": "medical_records", "_id": "91226903", "rating": 1 },
-		        { "_index": "medical_records", "_id": "90320756", "rating": 1 },
-		        { "_index": "medical_records", "_id": "91336317", "rating": 2 }
-		      ]
-		    }
-  		]
+		          "query": { 
+		          		"multi_match": { 
+		          			"query": query_string, 
+		          			"fields": ["Title","Abstract" ]
+		          	} 
+		        }
+		    }, 
+		      "ratings": [
+		      	{"_index": "medical_records", "_id":ids[i], "rating": ratings[i]} for i in range(len(ratings))
+			]
+	}]
+	metric = {
+		"mean_reciprocal_rank": {
+                "k": 50,
+                "relevant_rating_threshold": 0
+        }
 	}
-# “term”: { “text”: “comedy” }
-# "must": [
-#   {
-#     "match": {
-#       "text_entry": {
-#         "query": "love",
-#         "_name": "love-must"
-#       }
-#     }
-#   }
-# ],
+	return req,  metric
