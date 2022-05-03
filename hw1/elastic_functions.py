@@ -118,7 +118,7 @@ def get_rank_eval_query(qid, query_string, ratings, ids):
 		          "query": { 
 		          		"multi_match": { 
 		          			"query": query_string, 
-		          			"fields": ["Title","Abstract" ]
+		          			"fields": ["Title","Abstract","PublicationType" ]
 		          	} 
 		        }
 		    }, 
@@ -133,3 +133,17 @@ def get_rank_eval_query(qid, query_string, ratings, ids):
         }
 	}
 	return req,  metric
+
+def get_fuzzy_query(query_string):
+
+	fquery = {
+		"query": {
+			"multi_match": { 
+      			"query": query_string, 
+      			"fields": ["Title","Abstract","PublicationType"],
+      			"fuzziness": "AUTO"
+		    } 
+		}
+	}
+
+	return fquery

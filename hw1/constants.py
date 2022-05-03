@@ -11,10 +11,12 @@ class query_constants:
 	tf_idf = 'tf_idf'
 	bquery = 'boolean_query'
 	rank_eval = 'relevance_feedback'
+	fuzzy = 'custom_fuzzy'
 
 	tfidf_log_file = 'results/tf_idf.txt'
 	bool_log_file = 'results/bool.txt'
 	rank_log_file = 'results/rank.txt'
+	fuzzy_log_file = 'results/fuzzy.txt'
 
 	file_queries = {
 		'num':'query_number',
