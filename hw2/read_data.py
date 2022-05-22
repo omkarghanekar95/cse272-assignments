@@ -49,6 +49,6 @@ def read_ratings_file():
 
 	print(cell_csv_data.dtypes)
 
-	cell_csv_data.drop(['timestamp'], axis=1,inplace=True)
-
+	#cell_csv_data.drop(['timestamp'], axis=1,inplace=True)
+	cell_csv_data.drop(cell_csv_data.columns[len(cell_csv_data.columns)-1], axis=1,inplace=True)
 	return cell_csv_data
