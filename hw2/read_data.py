@@ -2,7 +2,7 @@ import numpy as np, pandas as pd
 
 
 subset_file = "dataset/reviews_subset.json"
-full_dataset = "Cell_Phones_and_Accessories_5.json"
+full_dataset = "dataset/Cell_Phones_and_Accessories_5.json"
 
 subset_csv_file = "dataset/cell_phone_reviews.csv"
 full_csv_file = "dataset/Cell_Phones_and_Accessories.csv"
@@ -44,7 +44,7 @@ def read_data_file():
 
 ## read_ratings file
 def read_ratings_file():
-	cell_csv_data=pd.read_csv(full_dataset)
+	cell_csv_data=pd.read_csv(full_csv_file)
 	cell_csv_data.head()
 
 	print(cell_csv_data.dtypes)
